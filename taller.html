@@ -62,7 +62,7 @@
         }
 
         button:hover {
-            background-color: #4cae4c;
+            background-color: #394cf0;
         }
 
         @media (max-width: 500px) {
@@ -75,64 +75,62 @@
 <body>
     <h1>Bienvenido al FBI</h1>
     <form action="" method="post" id="fbi">
-        <label for="nombre">Nombre:</label><br>
-        <input type="text" id="nombre" name="nombre" required pattern="^[a-zA-Z0-9 ]{2,8}$" autocomplete="off"><br>
+        <label for="nombre">Nombre:</label>
+        <input type="text" id="nombre" name="nombre" required pattern="^[A-Za-z\s]{2,10}$" title="Ingresa un nombre válido de 2 a 10 caracteres."><br>
 
-        <label for="email">Email:</label><br>
-        <input type="email" id="email" name="email" required><br><br>
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required><br>
 
-        <label for="precio">Precio:</label><br>
-        <input type="number" id="precio" name="precio" required><br><br>
+        <label for="precio">Precio:</label>
+        <input type="number" id="precio" name="precio" required><br>
 
-        <label for="image">Sube una imagen:</label><br> 
-        <input type="file" id="image" name="image" accept="image/*" required><br><br>
+        <label for="image">Sube una imagen:</label>
+        <input type="file" id="image" name="image" accept="image/*" required><br>
 
-        <label for="aceptar">Aceptar Condiciones:</label><br>
-        <input type="checkbox" id="aceptar" name="aceptar" required autocomplete="off"> Acepto las políticas<br><br> 
+        <label for="aceptar">Aceptar Condiciones:</label>
+        <input type="checkbox" id="aceptar" name="aceptar" required> Acepto las políticas<br>
 
         <button type="submit">Entrar</button>
     </form>
 
     <script>
-        const miInput = document.querySelector('input');
-
-        miInput.addEventListener('input', () => {
-        miInput.setCustomValidity('');
-        miInput.checkValidity();
-        });
-
-        // Muestra el mensaje de validación
-        miInput.addEventListener('invalid', () => {
-            miInput.setCustomValidity('Si no aceptas no puedes continuar');
-        });
-
-        const oneMegaBytesInBytes = 10 ** 6;
-        const pesoLimite = oneMegaBytesInBytes * 0.1; // 5 megabytes
-        const extensionesPermitidas = ['jpg', 'jpeg', 'png'];
+        const inputs = document.querySelectorAll('input');
+        const pesoLimite = 5 * 10 ** 6; // 5 megabytes
+        const extensionesPermitidas = ['png', 'jpg', 'jpeg'];
         const miInput1 = document.querySelector('#image');
 
+        inputs.forEach(input => {
+            input.addEventListener('input', () => {
+                input.setCustomValidity('');
+                input.checkValidity();
+            });
+
+            input.addEventListener('invalid', () => {
+                if (input.id === 'nombre') {
+                    input.setCustomValidity('Si no es molestia... ¿me dices tu nombre?');
+                } else if (input.id === 'email') {
+                    input.setCustomValidity('Me parece que esto no es un E-mail.');
+                } else if (input.id === 'aceptar') {
+                    input.setCustomValidity('Debes aceptar las condiciones para continuar.');
+                }
+            });
+        });
+
         function validarImagen() {
-            // Resetea mensaje
             miInput1.setCustomValidity('');
-
-            // Destructuramos para obtener el nombre y el tamaño
             const { name: archivoNombre, size: archivoPeso } = this.files[0];
+            const fileExtension = archivoNombre.split('.').pop();
 
-            // Obtenemos la extensión
-            const fileExtension = archivoNombre.split(".").pop();
-
-            // Validamos si tienes una extensión válida
             if (!extensionesPermitidas.includes(fileExtension)) {
-                miInput1.setCustomValidity('Formato no válido, solo se admite jpg y png');
+                miInput1.setCustomValidity('Formato no válido, solo se admite jpg, jpeg y png');
             }
 
-            // Validamos el peso
             if (archivoPeso > pesoLimite) {
-                miInput1.setCustomValidity('Demasiado grande');
+                miInput1.setCustomValidity('Demasiado grande. Máximo 5MB.');
             }
         }
 
-        miInput1.addEventListener("input", validarImagen);
+        miInput1.addEventListener('change', validarImagen);
     </script>
 </body>
 </html>
